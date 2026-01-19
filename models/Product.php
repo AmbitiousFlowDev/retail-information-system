@@ -1,13 +1,20 @@
 <?php
 require_once 'utils/Connection.php';
 
-class Product extends Connection
+class Product
 {
     protected string $table = 'products';
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Connection::getInstance();
+    }
 
     public function all()
     {
-        return $this->query("
+        // Note: keeping table alias 'produits' as per original SQL
+        return $this->db->query("
             SELECT p.*, c.name AS supplier
             FROM produits p
             JOIN clients c ON c.id = p.supplier_id
@@ -16,7 +23,7 @@ class Product extends Connection
 
     public function find(int $id)
     {
-        $stmt = $this->prepare("SELECT * FROM {$this->table} WHERE id=?");
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id=?");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
@@ -26,7 +33,8 @@ class Product extends Connection
         $sql = "INSERT INTO {$this->table}
                 (name, description, supplier_id, cost, status)
                 VALUES (:name, :description, :supplier_id, :cost, :status)";
-        return $this->prepare($sql)->execute($data);
+        
+        return $this->db->prepare($sql)->execute($data);
     }
 
     public function update(int $id, array $data)
@@ -36,12 +44,13 @@ class Product extends Connection
                     supplier_id=:supplier_id, cost=:cost, status=:status
                 WHERE id=:id";
         $data['id'] = $id;
-        return $this->prepare($sql)->execute($data);
+        
+        return $this->db->prepare($sql)->execute($data);
     }
 
     public function delete(int $id)
     {
-        return $this
+        return $this->db
             ->prepare("DELETE FROM {$this->table} WHERE id=?")
             ->execute([$id]);
     }

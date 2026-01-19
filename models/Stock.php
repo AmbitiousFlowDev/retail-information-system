@@ -1,13 +1,19 @@
 <?php
-require_once 'Connection.php';
+require_once 'utils/Connection.php';
 
-class Stock extends Connection
+class Stock
 {
     protected string $table = 'stock_list';
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Connection::getInstance();
+    }
 
     public function all()
     {
-        return $this->query("
+        return $this->db->query("
             SELECT s.*, p.name AS produit
             FROM stock_list s
             JOIN produits p ON p.id = s.item_id
@@ -21,7 +27,8 @@ class Stock extends Connection
         $sql = "INSERT INTO {$this->table}
                 (item_id, quantity, unit, price, total, type)
                 VALUES (:item_id, :quantity, :unit, :price, :total, :type)";
-        return $this->prepare($sql)->execute($data);
+        
+        return $this->db->prepare($sql)->execute($data);
     }
 
     public function getStockByProduct(int $itemId): int
@@ -33,7 +40,7 @@ class Stock extends Connection
             FROM stock_list
             WHERE item_id=?
         ";
-        $stmt = $this->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$itemId]);
         return (int) ($stmt->fetch()['stock'] ?? 0);
     }

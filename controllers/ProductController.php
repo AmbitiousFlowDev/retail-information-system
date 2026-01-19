@@ -11,33 +11,36 @@ class ProductController extends Controller
         $this->model = new Product();
     }
 
-    public function index()
-    {
-        return $this->model->all();
-    }
-
     public function store()
     {
         $this->model->create([
-            'name'        => $_POST['name'],
+            'name' => $_POST['name'],
             'description' => $_POST['description'],
             'supplier_id' => $_POST['supplier_id'],
-            'cost'        => $_POST['cost'],
-            'status'      => 1
+            'cost' => $_POST['cost'],
+            'status' => 1
         ]);
 
+        $this->notify('product.created', $_POST['name']);
         $this->redirect('index.php?page=produits');
     }
 
     public function update()
     {
         $this->model->update($_POST['id'], $_POST);
+        $this->notify('product.updated', $_POST['id']);
         $this->redirect('index.php?page=produits');
     }
 
     public function delete()
     {
         $this->model->delete($_GET['id']);
+        $this->notify('product.deleted', $_GET['id']);
         $this->redirect('index.php?page=produits');
+    }
+
+    public function index()
+    {
+        return $this->model->all();
     }
 }

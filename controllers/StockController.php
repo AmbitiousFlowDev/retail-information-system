@@ -11,21 +11,22 @@ class StockController extends Controller
         $this->model = new Stock();
     }
 
-    public function index()
-    {
-        return $this->model->all();
-    }
-
     public function store()
     {
         $this->model->create([
-            'item_id'  => $_POST['item_id'],
+            'item_id' => $_POST['item_id'],
             'quantity' => $_POST['quantity'],
-            'unit'     => $_POST['unit'] ?? 'pcs',
-            'price'    => $_POST['price'],
-            'type'     => $_POST['type']
+            'unit' => $_POST['unit'] ?? 'pcs',
+            'price' => $_POST['price'],
+            'type' => $_POST['type']
         ]);
 
+        $this->notify('stock.updated', $_POST);
         $this->redirect('index.php?page=stock');
+    }
+
+    public function index()
+    {
+        return $this->model->all();
     }
 }
