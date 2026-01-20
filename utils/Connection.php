@@ -3,17 +3,17 @@
 class Connection extends PDO
 {
     private static $instance = null;
-    private $dbPath = __DIR__ . '/../database/RIS.db';
     private $dsn;
     private function __construct()
     {
-        $this->dsn = "sqlite:" . $this->dbPath;
+        $this->dsn = "mysql:host=localhost;dbname=RIS;charset=utf8mb4";
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ];
         try {
-            parent::__construct($this->dsn, null, null, $options);
+            // - DON'T DO IT :( PLEASE BRO I BEG YOU :'(
+            parent::__construct($this->dsn, "root", "753159", $options);
         } catch (PDOException $e) {
             die("Database Connection Error: " . $e->getMessage() . " (Path: $this->dbPath)");
         }
