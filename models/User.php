@@ -1,5 +1,4 @@
 <?php
-require_once 'Model.php';
 
 final class User extends Model
 {
@@ -19,26 +18,13 @@ final class User extends Model
     public function create(array $data)
     {
         $data['password'] = md5($data['password']);
-
-        $sql = "
-            INSERT INTO {$this->table}
-            (firstname, lastname, username, password, type)
-            VALUES (:firstname, :lastname, :username, :password, :type)
-        ";
-
+        $sql = " INSERT INTO {$this->table} (firstname, lastname, username, password, type) VALUES (:firstname, :lastname, :username, :password, :type)";
         return $this->db->prepare($sql)->execute($data);
     }
 
     public function findByCredentials(string $username, string $password)
     {
-        $stmt = $this->db->prepare("
-            SELECT *
-            FROM {$this->table}
-            WHERE username = ?
-              AND password = ?
-              AND deleted_at IS NULL
-        ");
-
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE username = ? AND password_hash = ? AND deleted_at IS NULL");
         $stmt->execute([$username, md5($password)]);
         return $stmt->fetch();
     }

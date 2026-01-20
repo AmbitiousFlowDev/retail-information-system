@@ -7,7 +7,7 @@ CREATE TABLE Employee (
 
 CREATE TABLE User (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
-    login VARCHAR(100) NOT NULL UNIQUE,
+    username VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     user_category VARCHAR(50) NOT NULL,
     employee_id INT NOT NULL UNIQUE,

@@ -1,5 +1,4 @@
 <?php
-require_once '../models/Audit.php';
 
 class AuditObserver implements Observer
 {

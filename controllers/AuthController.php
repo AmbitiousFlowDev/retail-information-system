@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Controller.php';
-require_once '../traits/AuthTrait.php';
 
 class AuthController extends Controller
 {
@@ -13,17 +11,25 @@ class AuthController extends Controller
 
         if ($this->authenticate($username, $password)) {
             $this->notify('user.login', $this->currentUser());
-            $this->redirect('dashboard.php');
+            $this->redirect('controller=Dashboard&action=index');
         } else {
             $error = "Invalid username or password";
             $this->render('auth/login', compact('error'));
         }
+    }
+    public function loginForm()
+    {
+        if ($this->checkAuth()) {
+            $this->redirect('controller=Dashboard&action=index');
+        }
+
+        $this->render('auth/login');
     }
     public function logout()
     {
         $user = $this->currentUser();
         $this->logout();
         $this->notify('user.logout', $user);
-        $this->redirect('login.php');
+        $this->redirect('controller=Auth&action=loginForm');
     }
 }

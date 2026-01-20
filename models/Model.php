@@ -1,10 +1,10 @@
 <?php
-require_once '../utils/Connection.php';
 
 abstract class Model
 {
     protected $db;
     protected string $table;
+    protected string $primaryKey = "id";
     public function __construct()
     {
         $this->db = Connection::getInstance();
@@ -18,7 +18,7 @@ abstract class Model
     {
         $stmt = $this->db->prepare("
             SELECT * FROM {$this->table}
-            WHERE id = ? AND deleted_at IS NULL
+            WHERE {$this->primaryKey} = ? AND deleted_at IS NULL
         ");
         $stmt->execute([$id]);
 
@@ -27,7 +27,7 @@ abstract class Model
     public function delete(int $id)
     {
         return $this->db
-            ->prepare("UPDATE {$this->table} SET deleted_at = NOW() WHERE id = ?")
+            ->prepare("UPDATE {$this->table} SET deleted_at = NOW() WHERE {$this->primaryKey} = ?")
             ->execute([$id]);
     }
     public function restore(int $id)

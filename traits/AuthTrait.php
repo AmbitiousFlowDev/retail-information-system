@@ -1,5 +1,4 @@
 <?php
-require_once 'models/User.php';
 
 trait AuthTrait
 {

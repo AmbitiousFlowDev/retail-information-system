@@ -30,7 +30,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="" method="POST">
+                <form action="index.php?controller=Auth&action=login" method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label text-secondary fw-bold small">Nom utilisateur</label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Entrez votre nom utilisateur" required>
