@@ -1,0 +1,108 @@
+-- Enable Foreign Key support (recommended for SQLite)
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE Employee (
+    employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    role VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE User (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    login VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    user_category VARCHAR(50) NOT NULL,
+    employee_id INTEGER NOT NULL UNIQUE,
+    CONSTRAINT fk_user_employee
+        FOREIGN KEY (employee_id)
+        REFERENCES Employee(employee_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Client (
+    client_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    address VARCHAR(255),
+    city VARCHAR(100)
+);
+
+CREATE TABLE Product (
+    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category VARCHAR(100) NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL CHECK (unit_price >= 0),
+    stock_quantity INTEGER NOT NULL CHECK (stock_quantity >= 0)
+);
+
+CREATE TABLE `Order` (
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_date DATE NOT NULL,
+    client_id INTEGER NOT NULL,
+    employee_id INTEGER NOT NULL,
+    CONSTRAINT fk_order_client
+        FOREIGN KEY (client_id)
+        REFERENCES Client(client_id),
+    CONSTRAINT fk_order_employee
+        FOREIGN KEY (employee_id)
+        REFERENCES Employee(employee_id)
+);
+
+CREATE TABLE OrderLine (
+    order_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    unit_price DECIMAL(10,2) NOT NULL CHECK (unit_price >= 0),
+    PRIMARY KEY (order_id, product_id),
+    CONSTRAINT fk_orderline_order
+        FOREIGN KEY (order_id)
+        REFERENCES `Order`(order_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_orderline_product
+        FOREIGN KEY (product_id)
+        REFERENCES Product(product_id)
+);
+
+CREATE TABLE Audit (
+    audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    action_type VARCHAR(50) NOT NULL,
+    action_date DATETIME NOT NULL,
+    description TEXT,
+    user_id INTEGER NOT NULL,
+    CONSTRAINT fk_audit_user
+        FOREIGN KEY (user_id)
+        REFERENCES User(user_id)
+);
+
+CREATE TABLE Bonus (
+    bonus_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year INTEGER NOT NULL,
+    turnover DECIMAL(12,2) NOT NULL CHECK (turnover >= 0),
+    bonus_amount DECIMAL(12,2) NOT NULL CHECK (bonus_amount >= 0),
+    employee_id INTEGER NOT NULL,
+    CONSTRAINT fk_bonus_employee
+        FOREIGN KEY (employee_id)
+        REFERENCES Employee(employee_id),
+    CONSTRAINT uq_bonus_employee_year
+        UNIQUE (employee_id, year)
+);
+
+CREATE TABLE Discount (
+    discount_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year INTEGER NOT NULL,
+    total_purchases DECIMAL(12,2) NOT NULL CHECK (total_purchases >= 0),
+    discount_amount DECIMAL(12,2) NOT NULL CHECK (discount_amount >= 0),
+    client_id INTEGER NOT NULL,
+    CONSTRAINT fk_discount_client
+        FOREIGN KEY (client_id)
+        REFERENCES Client(client_id),
+    CONSTRAINT uq_discount_client_year
+        UNIQUE (client_id, year)
+);
+
+ALTER TABLE Employee ADD COLUMN deleted_at DATETIME NULL;
+ALTER TABLE User ADD COLUMN deleted_at DATETIME NULL;
+ALTER TABLE Client ADD COLUMN deleted_at DATETIME NULL;
+ALTER TABLE Product ADD COLUMN deleted_at DATETIME NULL;
+ALTER TABLE `Order` ADD COLUMN deleted_at DATETIME NULL;

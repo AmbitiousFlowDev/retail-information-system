@@ -1,41 +1,20 @@
 <?php
-require_once 'utils/Connection.php';
+require_once 'Model.php';
 
-class Order
+class Order extends Model
 {
-    protected string $table = 'orders';
-    protected $db;
+    protected string $table = 'Order';
 
-    public function __construct()
+    public function findByClient(int $clientId)
     {
-        $this->db = Connection::getInstance();
-    }
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM {$this->table}
+            WHERE client_id = ?
+              AND deleted_at IS NULL
+        ");
 
-    public function all()
-    {
-        return $this->db->query("SELECT * FROM {$this->table}")->fetchAll();
-    }
-
-    public function find(int $id)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id=?");
-        $stmt->execute([$id]);
-        return $stmt->fetch();
-    }
-
-    public function create(array $data)
-    {
-        $sql = "INSERT INTO {$this->table}
-                (sales_code, client, amount, remarks, stock_ids)
-                VALUES (:sales_code, :client, :amount, :remarks, :stock_ids)";
-        
-        return $this->db->prepare($sql)->execute($data);
-    }
-
-    public function delete(int $id)
-    {
-        return $this->db
-            ->prepare("DELETE FROM {$this->table} WHERE id=?")
-            ->execute([$id]);
+        $stmt->execute([$clientId]);
+        return $stmt->fetchAll();
     }
 }

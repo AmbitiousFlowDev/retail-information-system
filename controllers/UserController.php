@@ -1,53 +1,59 @@
 <?php
-require_once 'models/Utilisateur.php';
-require_once 'utils/Auth.php';
-require_once 'controllers/Controller.php';
+require_once 'Controller.php';
+require_once 'models/User.php';
 
 class UserController extends Controller
 {
-    private Utilisateur $model;
+    private User $user;
 
     public function __construct()
     {
-        $this->model = new Utilisateur();
-    }
-
-    public function login()
-    {
-        $username = $_POST['username'];
-        if (Auth::attempt($username, $_POST['password'])) {
-            $this->notify('user.login_success', $username);
-            $this->redirect('index.php');
-        }
-
-        $this->notify('user.login_failed', $username);
-        $this->redirect('login.php?error=1');
-    }
-
-    public function logout()
-    {
-        $user = Auth::user();
-        Auth::logout();
-        $this->notify('user.logout', $user);
-        $this->redirect('login.php');
-    }
-
-    public function store()
-    {
-        $this->model->create($_POST);
-        $this->notify('user.created', $_POST['username']);
-        $this->redirect('index.php?page=users');
-    }
-
-    public function delete()
-    {
-        $this->model->delete($_GET['id']);
-        $this->notify('user.deleted', $_GET['id']);
-        $this->redirect('index.php?page=users');
+        $this->user = new User();
     }
 
     public function index()
     {
-        return $this->model->all();
+        $users = $this->user->all();
+        $this->render('users/index', compact('users'));
+    }
+
+    public function show(int $id)
+    {
+        $user = $this->user->find($id);
+        $this->render('users/show', compact('user'));
+    }
+
+    public function store(array $data)
+    {
+        $this->user->create($data);
+        $this->notify('user.created', $data);
+        $this->redirect('/users');
+    }
+
+    public function delete(int $id)
+    {
+        $this->user->delete($id);
+        $this->notify('user.deleted', ['id' => $id]);
+        $this->redirect('/users');
+    }
+
+    public function restore(int $id)
+    {
+        $this->user->restore($id);
+        $this->notify('user.restored', ['id' => $id]);
+        $this->redirect('/users');
+    }
+
+    public function login(string $username, string $password)
+    {
+        $user = $this->user->findByCredentials($username, $password);
+
+        if ($user) {
+            $_SESSION['user'] = $user;
+            $this->notify('user.login', $user);
+            $this->redirect('/dashboard');
+        }
+
+        $this->redirect('/login?error=1');
     }
 }
