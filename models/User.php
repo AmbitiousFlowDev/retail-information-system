@@ -1,7 +1,7 @@
 <?php
 require_once 'utils/Connection.php';
 
-class Utilisateur
+class User
 {
     protected string $table = 'users';
     protected $db;

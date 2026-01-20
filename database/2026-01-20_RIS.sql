@@ -18,7 +18,7 @@ CREATE TABLE clients (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE produits (
+CREATE TABLE products (
   id int(30) NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   description text DEFAULT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE stock_list (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE commandes (
+CREATE TABLE orders (
   id int(30) NOT NULL AUTO_INCREMENT,
   sales_code varchar(50) NOT NULL,
   client varchar(255) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE commandes (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE utilisateurs (
+CREATE TABLE users (
   id int(30) NOT NULL AUTO_INCREMENT,
   firstname varchar(100) NOT NULL,
   lastname varchar(100) NOT NULL,
@@ -79,5 +79,5 @@ CREATE TABLE utilisateurs (
   KEY type (type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO utilisateurs (firstname, lastname, username, password, type)
+INSERT INTO users (firstname, lastname, username, password, type)
 VALUES ('Admin', 'Système', 'admin', MD5('admin123'), 1);

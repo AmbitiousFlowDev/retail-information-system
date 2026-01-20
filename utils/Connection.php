@@ -1,5 +1,7 @@
 <?php
 
+require_once "init.php";
+
 class Connection extends PDO {
     private static $instance = null;
     private $host     = DB_SERVER;

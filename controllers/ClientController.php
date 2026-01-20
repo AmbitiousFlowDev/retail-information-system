@@ -5,7 +5,6 @@ require_once 'controllers/Controller.php';
 class ClientController extends Controller
 {
     private Client $model;
-
     public function __construct()
     {
         $this->model = new Client();

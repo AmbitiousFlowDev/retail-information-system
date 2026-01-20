@@ -1,13 +1,11 @@
 <?php
-require_once 'models/Utilisateur.php';
+require_once 'models/User.php';
 
 class Auth
 {
     public static function attempt(string $username, string $password): bool
     {
-        $userModel = new Utilisateur();
-        
-        // Find user by credentials
+        $userModel = new User();
         $user = $userModel->findByCredentials($username, $password);
 
         if ($user) {
