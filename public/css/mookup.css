@@ -1,0 +1,98 @@
+/* Custom Styles to match the mock-up precisely */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+.login-section {
+    min-height: 100vh;
+}
+
+.left-panel {
+    background-color: #ffffff;
+    padding: 50px;
+}
+
+.right-panel {
+    background-color: #1a73e8;
+    /* Matches the vibrant blue in image */
+    color: white;
+    position: relative;
+}
+
+.form-control {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #1a73e8;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background-color: #1557b0;
+}
+
+.input-group-text {
+    background: transparent;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+}
+
+.password-input {
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.brand-icon {
+    font-size: 3rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.feature-list li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.check-icon {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 0.8rem;
+}
+
+.help-icon {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: #000;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

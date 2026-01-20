@@ -1,18 +1,11 @@
 <?php
+
 require_once 'Controller.php';
 require_once '../traits/AuthTrait.php';
 
 class AuthController extends Controller
 {
     use AuthTrait;
-    public function loginForm()
-    {
-        if ($this->checkAuth()) {
-            $this->redirect('dashboard.php');
-        }
-
-        $this->render('auth/login');
-    }
     public function login(array $data)
     {
         $username = $data['username'] ?? '';
