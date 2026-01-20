@@ -1,6 +1,4 @@
 <?php
-require_once 'Controller.php';
-require_once '../models/Order.php';
 
 class OrderController extends Controller
 {

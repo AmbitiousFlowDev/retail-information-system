@@ -1,6 +1,4 @@
 <?php
-require_once 'Controller.php';
-require_once '../models/Client.php';
 
 class ClientController extends Controller
 {

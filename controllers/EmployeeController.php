@@ -1,6 +1,4 @@
 <?php
-require_once 'Controller.php';
-require_once '../models/Employee.php';
 
 class EmployeeController extends Controller
 {
