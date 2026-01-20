@@ -1,0 +1,31 @@
+services:
+  database:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 753159
+      MYSQL_DATABASE: RSI
+      MYSQL_USER: rsi_user
+      MYSQL_PASSWORD: rsi_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_container
+    restart: always
+    depends_on:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 753159
+    ports:
+      - "5050:80"
+
+volumes:
+  mysql_data:

@@ -1,10 +1,3 @@
-<?php 
-
-namespace Layouts;
-
-?>
-
-
 <aside class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between hidden md:flex">
     <div>
         <div class="h-16 flex items-center px-6 border-b border-gray-100">
@@ -16,17 +9,20 @@ namespace Layouts;
                 <i class="fa-solid fa-gauge w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Dashboard</span>
             </a>
-            <a href="../orders/index.php"
-                class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
-                <i class="fa-solid fa-cart-shopping w-5 opacity-75"></i>
-                <span class="font-medium text-sm ml-2">Orders</span>
-            </a>
 
             <a href="../products/index.php"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-box w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Products</span>
             </a>
+
+            <a href="../orders/index.php"
+                class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
+                <i class="fa-solid fa-cart-shopping w-5 opacity-75"></i>
+                <span class="font-medium text-sm ml-2">Orders</span>
+            </a>
+
+
 
             <a href="../clients/index.php"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">

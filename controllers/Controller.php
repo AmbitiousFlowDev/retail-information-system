@@ -19,8 +19,6 @@ abstract class Controller
     protected function render(string $view, array $data = [])
     {
         extract($data);
-        // Paths are relative to index.php
-        require_once 'views/layout/header.php';
         require_once "views/$view.php";
     }
 
