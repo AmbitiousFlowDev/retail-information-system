@@ -1,7 +1,7 @@
 <?php
 require_once 'Model.php';
 
-class User extends Model
+final class User extends Model
 {
     protected string $table = 'User';
 

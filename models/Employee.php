@@ -1,7 +1,7 @@
 <?php
 require_once 'Model.php';
 
-class Employee extends Model
+final class Employee extends Model
 {
     protected string $table = 'Employee';
 }

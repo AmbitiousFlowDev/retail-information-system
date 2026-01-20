@@ -1,52 +1,56 @@
--- Enable Foreign Key support (recommended for SQLite)
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE Employee (
-    employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    role VARCHAR(50) NOT NULL
+    role VARCHAR(50) NOT NULL,
+    deleted_at DATETIME NULL
 );
 
 CREATE TABLE User (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     login VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     user_category VARCHAR(50) NOT NULL,
     employee_id INTEGER NOT NULL UNIQUE,
+    deleted_at DATETIME NULL,
     CONSTRAINT fk_user_employee
         FOREIGN KEY (employee_id)
-        REFERENCES Employee(employee_id)
+        REFERENCES Employee(id)
         ON DELETE CASCADE
 );
 
 CREATE TABLE Client (
-    client_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
-    city VARCHAR(100)
+    city VARCHAR(100),
+    deleted_at DATETIME NULL
 );
 
 CREATE TABLE Product (
-    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     category VARCHAR(100) NOT NULL,
     name VARCHAR(150) NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL CHECK (unit_price >= 0),
-    stock_quantity INTEGER NOT NULL CHECK (stock_quantity >= 0)
+    stock_quantity INTEGER NOT NULL CHECK (stock_quantity >= 0),
+    deleted_at DATETIME NULL
 );
 
 CREATE TABLE `Order` (
-    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     order_date DATE NOT NULL,
     client_id INTEGER NOT NULL,
     employee_id INTEGER NOT NULL,
+    deleted_at DATETIME NULL,
     CONSTRAINT fk_order_client
         FOREIGN KEY (client_id)
-        REFERENCES Client(client_id),
+        REFERENCES Client(id),
     CONSTRAINT fk_order_employee
         FOREIGN KEY (employee_id)
-        REFERENCES Employee(employee_id)
+        REFERENCES Employee(id)
 );
 
 CREATE TABLE OrderLine (
@@ -54,55 +58,96 @@ CREATE TABLE OrderLine (
     product_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     unit_price DECIMAL(10,2) NOT NULL CHECK (unit_price >= 0),
+    deleted_at DATETIME NULL,
     PRIMARY KEY (order_id, product_id),
     CONSTRAINT fk_orderline_order
         FOREIGN KEY (order_id)
-        REFERENCES `Order`(order_id)
+        REFERENCES `Order`(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_orderline_product
         FOREIGN KEY (product_id)
-        REFERENCES Product(product_id)
+        REFERENCES Product(id)
 );
 
 CREATE TABLE Audit (
-    audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     action_type VARCHAR(50) NOT NULL,
     action_date DATETIME NOT NULL,
     description TEXT,
     user_id INTEGER NOT NULL,
     CONSTRAINT fk_audit_user
         FOREIGN KEY (user_id)
-        REFERENCES User(user_id)
+        REFERENCES User(id)
 );
 
 CREATE TABLE Bonus (
-    bonus_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     year INTEGER NOT NULL,
     turnover DECIMAL(12,2) NOT NULL CHECK (turnover >= 0),
     bonus_amount DECIMAL(12,2) NOT NULL CHECK (bonus_amount >= 0),
     employee_id INTEGER NOT NULL,
     CONSTRAINT fk_bonus_employee
         FOREIGN KEY (employee_id)
-        REFERENCES Employee(employee_id),
+        REFERENCES Employee(id),
     CONSTRAINT uq_bonus_employee_year
         UNIQUE (employee_id, year)
 );
 
 CREATE TABLE Discount (
-    discount_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     year INTEGER NOT NULL,
     total_purchases DECIMAL(12,2) NOT NULL CHECK (total_purchases >= 0),
     discount_amount DECIMAL(12,2) NOT NULL CHECK (discount_amount >= 0),
     client_id INTEGER NOT NULL,
     CONSTRAINT fk_discount_client
         FOREIGN KEY (client_id)
-        REFERENCES Client(client_id),
+        REFERENCES Client(id),
     CONSTRAINT uq_discount_client_year
         UNIQUE (client_id, year)
 );
 
-ALTER TABLE Employee ADD COLUMN deleted_at DATETIME NULL;
-ALTER TABLE User ADD COLUMN deleted_at DATETIME NULL;
-ALTER TABLE Client ADD COLUMN deleted_at DATETIME NULL;
-ALTER TABLE Product ADD COLUMN deleted_at DATETIME NULL;
-ALTER TABLE `Order` ADD COLUMN deleted_at DATETIME NULL;
+-- 1. Base Tables (No dependencies)
+INSERT INTO Employee (first_name, last_name, role) VALUES 
+('Alice', 'Vance', 'Manager'),
+('Barney', 'Calhoun', 'Sales Representative'),
+('Gordon', 'Freeman', 'Inventory Specialist');
+
+INSERT INTO Client (first_name, last_name, address, city) VALUES 
+('Isaac', 'Kleiner', '123 Lab St', 'Black Mesa'),
+('Eli', 'Vance', '456 Scrapyard Way', 'City 17'),
+('Wallace', 'Breen', '1 Citadel Plaza', 'City 17');
+
+INSERT INTO Product (category, name, unit_price, stock_quantity) VALUES 
+('Hardware', 'HEV Suit Battery', 45.00, 100),
+('Hardware', 'Gravity Gun', 1200.00, 5),
+('Supplies', 'Crowbar', 15.99, 50);
+
+-- 2. User Table (Depends on Employee)
+INSERT INTO User (login, password_hash, user_category, employee_id) VALUES 
+('alice_admin', 'argon2_hashed_val_1', 'Administrator', 1),
+('barney_sales', 'argon2_hashed_val_2', 'Sales', 2);
+
+-- 3. Order Table (Depends on Client and Employee)
+INSERT INTO `Order` (order_date, client_id, employee_id) VALUES 
+('2024-01-15', 1, 2),
+('2024-01-16', 2, 2);
+
+-- 4. OrderLine Table (Depends on Order and Product)
+INSERT INTO OrderLine (order_id, product_id, quantity, unit_price) VALUES 
+(1, 1, 10, 45.00),
+(1, 3, 1, 15.99),
+(2, 2, 1, 1200.00);
+
+-- 5. Audit Table (Depends on User)
+INSERT INTO Audit (action_type, action_date, description, user_id) VALUES 
+('LOGIN', '2024-01-15 08:30:00', 'User logged in from terminal 4', 2),
+('SALE', '2024-01-15 14:00:00', 'Completed Order #1', 2);
+
+-- 6. Bonus and Discount (Depends on Employee and Client)
+INSERT INTO Bonus (year, turnover, bonus_amount, employee_id) VALUES 
+(2023, 15000.00, 750.00, 2);
+
+INSERT INTO Discount (year, total_purchases, discount_amount, client_id) VALUES 
+(2024, 2500.00, 250.00, 1);
+
+

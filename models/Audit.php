@@ -1,7 +1,7 @@
 <?php
 require_once 'Model.php';
 
-class Audit extends Model
+final class Audit extends Model
 {
     protected string $table = 'Audit';
 }

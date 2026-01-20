@@ -36,4 +36,35 @@ abstract class Model
             ->prepare("UPDATE {$this->table} SET deleted_at = NULL WHERE id = ?")
             ->execute([$id]);
     }
+    public function create(array $data)
+    {
+        $columns = array_keys($data);
+        $placeholders = array_map(fn($col) => ":$col", $columns);
+
+        $sql = sprintf(
+            "INSERT INTO %s (%s) VALUES (%s)",
+            $this->table,
+            implode(", ", $columns),
+            implode(", ", $placeholders)
+        );
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($data);
+    }
+    public function update(int $id, array $data)
+    {
+        $columns = array_keys($data);
+        $assignments = implode(", ", array_map(fn($col) => "$col = :$col", $columns));
+
+        $sql = sprintf(
+            "UPDATE %s SET %s WHERE id = :id AND deleted_at IS NULL",
+            $this->table,
+            $assignments
+        );
+
+        $stmt = $this->db->prepare($sql);
+        $data['id'] = $id;
+
+        return $stmt->execute($data);
+    }
 }
