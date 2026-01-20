@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../../utils/Auth.php';
 require_once __DIR__ . '/../../models/User.php';
 
