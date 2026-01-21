@@ -1,8 +1,8 @@
 <?php
 
-// ---------- Route Definitions ----------
-
 session_start();
+
+// PHP : IOC Container / Service Locator Pattern
 
 spl_autoload_register(function ($class) {
     $directories = [
