@@ -24,7 +24,7 @@ The project implements a **Model-View-Controller (MVC)** design pattern without 
 * **Language**: PHP 8+
 * **Database**: MySQL 8.0
 * **Frontend**: HTML5, CSS3, Bootstrap (Public assets included).
-* **Design Patterns Used**:
+* **Design Patterns Used**: Singleton and Observer
 * **MVC**: Separation of logic (`controllers/`), data (`models/`), and presentation (`views/`).
 * **Service Locator / IOC**: Custom autoloader implementation in `index.php`.
 * **Observer Pattern**: Used for the Audit system (`AuditLogger` observes `Controller` actions).
