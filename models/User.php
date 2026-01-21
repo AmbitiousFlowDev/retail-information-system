@@ -3,11 +3,29 @@
 final class User extends Model
 {
     protected string $table = 'User';
+    protected string $primaryKey = 'user_id';
+
+    public function allWithEmployees()
+    {
+        $sql = "
+            SELECT 
+                u.user_id,
+                u.username,
+                u.user_category,
+                u.employee_id,
+                CONCAT(e.first_name, ' ', e.last_name) as employee_name
+            FROM {$this->table} u
+            LEFT JOIN Employee e ON u.employee_id = e.employee_id
+            WHERE u.deleted_at IS NULL
+        ";
+
+        return $this->db->query($sql)->fetchAll();
+    }
 
     public function all()
     {
         $sql = "
-            SELECT id, firstname, lastname, username, type
+            SELECT user_id, username, user_category, employee_id
             FROM {$this->table}
             WHERE deleted_at IS NULL
         ";
@@ -15,10 +33,10 @@ final class User extends Model
         return $this->db->query($sql)->fetchAll();
     }
 
-    public function create(array $data)
+    public function createUser(array $data)
     {
-        $data['password'] = md5($data['password']);
-        $sql = " INSERT INTO {$this->table} (firstname, lastname, username, password, type) VALUES (:firstname, :lastname, :username, :password, :type)";
+        $sql = "INSERT INTO {$this->table} (username, password_hash, user_category, employee_id) 
+                VALUES (:username, :password_hash, :user_category, :employee_id)";
         return $this->db->prepare($sql)->execute($data);
     }
 

@@ -1,5 +1,5 @@
 <?php
-/** @var array $products */
+/** @var array $clients */
 /** @var object $user */
 ?>
 
@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Dashboard</title>
+    <title>Clients - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -68,7 +68,7 @@
             <!-- Header -->
             <header
                 class="h-16 bg-white border-b border-gray-200 flex justify-between items-center px-6 shadow-sm z-10">
-                <h1 class="text-xl font-semibold text-slate-800">Products</h1>
+                <h1 class="text-xl font-semibold text-slate-800">Clients</h1>
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-slate-600"><?= htmlspecialchars($user->username ?? 'Admin') ?></span>
                     <div class="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
@@ -82,68 +82,47 @@
                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 mb-6">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
 
-                        <div class="flex gap-2 w-full md:w-auto">
-                            <!-- Add Product Button -->
-                            <button onclick="openCreateModal()"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-sm flex items-center gap-2 text-sm font-medium transition-colors flex-1 md:flex-initial justify-center">
-                                <i class="fa-solid fa-plus"></i> Add Product
-                            </button>
+                        <!-- Add Client Button -->
+                        <button onclick="openCreateModal()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-sm flex items-center gap-2 text-sm font-medium transition-colors w-full md:w-auto justify-center">
+                            <i class="fa-solid fa-plus"></i> Add Client
+                        </button>
 
-                            <!-- Export PDF Button -->
-                            <a href="index.php?controller=Product&action=exportPDF"
-                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow-sm flex items-center gap-2 text-sm font-medium transition-colors flex-1 md:flex-initial justify-center">
-                                <i class="fa-solid fa-file-pdf"></i> Export PDF
-                            </a>
-                        </div>
+                        <!-- Export PDF Button -->
+                        <a href="index.php?controller=Client&action=exportPDF"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow-sm flex items-center gap-2 text-sm font-medium transition-colors w-full md:w-auto justify-center">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF
+                        </a>
 
                     </div>
 
-                    <!-- Products Table -->
+                    <!-- Clients Table -->
                     <table class="w-full text-left text-sm">
                         <thead class="bg-gray-50 border-b border-gray-100">
                             <tr>
                                 <th class="px-6 py-3 font-semibold text-slate-600">ID</th>
-                                <th class="px-6 py-3 font-semibold text-slate-600">Name</th>
-                                <th class="px-6 py-3 font-semibold text-slate-600">Category</th>
-                                <th class="px-6 py-3 font-semibold text-slate-600 text-center">Stock</th>
-                                <th class="px-6 py-3 font-semibold text-slate-600 text-right">Price</th>
-                                <th class="px-6 py-3 font-semibold text-slate-600">Status</th>
+                                <th class="px-6 py-3 font-semibold text-slate-600">First Name</th>
+                                <th class="px-6 py-3 font-semibold text-slate-600">Last Name</th>
+                                <th class="px-6 py-3 font-semibold text-slate-600">Address</th>
+                                <th class="px-6 py-3 font-semibold text-slate-600">City</th>
                                 <th class="px-6 py-3 font-semibold text-slate-600 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <?php foreach ($products as $product): ?>
-                                <?php
-                                // Determine status dynamically
-                                $stock = (int) $product['stock_quantity'];
-                                $status = $stock === 0 ? 'Out of Stock' : ($stock < 10 ? 'Low Stock' : 'In Stock');
-                                $badgeClass = match ($status) {
-                                    'In Stock' => 'bg-green-100 text-green-800',
-                                    'Low Stock' => 'bg-orange-100 text-orange-800',
-                                    'Out of Stock' => 'bg-red-100 text-red-800',
-                                    default => 'bg-gray-100 text-gray-800'
-                                };
-                                ?>
+                            <?php foreach ($clients as $client): ?>
                                 <tr class="table-row-hover transition-colors">
-                                    <td class="px-6 py-4 font-medium text-slate-900"><?= $product['product_id'] ?></td>
-                                    <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($product['name']) ?></td>
-                                    <td class="px-6 py-4 text-slate-500"><?= htmlspecialchars($product['category']) ?></td>
-                                    <td class="px-6 py-4 text-slate-900 font-medium text-center"><?= $stock ?></td>
-                                    <td class="px-6 py-4 text-slate-900 font-medium text-right">
-                                        <?= number_format($product['unit_price'], 2, ',', ' ') ?> €
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $badgeClass ?>">
-                                            <?= $status ?>
-                                        </span>
-                                    </td>
+                                    <td class="px-6 py-4 font-medium text-slate-900"><?= $client['client_id'] ?></td>
+                                    <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($client['first_name']) ?></td>
+                                    <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($client['last_name']) ?></td>
+                                    <td class="px-6 py-4 text-slate-500"><?= htmlspecialchars($client['address'] ?? 'N/A') ?></td>
+                                    <td class="px-6 py-4 text-slate-500"><?= htmlspecialchars($client['city'] ?? 'N/A') ?></td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-2">
-                                            <button onclick='openEditModal(<?= json_encode($product) ?>)'
+                                            <button onclick='openEditModal(<?= json_encode($client) ?>)'
                                                 class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs flex items-center gap-1 transition-colors">
                                                 <i class="fa-solid fa-pen"></i> Edit
                                             </button>
-                                            <button onclick="openDeleteModal(<?= $product['product_id'] ?>, '<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>')"
+                                            <button onclick="openDeleteModal(<?= $client['client_id'] ?>, '<?= htmlspecialchars($client['first_name'] . ' ' . $client['last_name'], ENT_QUOTES) ?>')"
                                                 class="bg-red-600 hover:bg-red-700 text-white p-1.5 px-2 rounded text-xs transition-colors">
                                                 <i class="fa-solid fa-trash"></i> Delete
                                             </button>
@@ -158,40 +137,40 @@
         </main>
     </div>
 
-    <!-- Create Product Modal -->
+    <!-- Create Client Modal -->
     <div id="createModal" class="modal">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
             <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Add New Product</h2>
+                <h2 class="text-lg font-semibold">Add New Client</h2>
                 <button onclick="closeModal('createModal')" class="text-white hover:text-gray-200">
                     <i class="fa-solid fa-times text-xl"></i>
                 </button>
             </div>
-            <form action="index.php?controller=Product&action=create" method="POST" class="p-6">
+            <form action="index.php?controller=Client&action=create" method="POST" class="p-6">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                        <input type="text" name="name" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" name="first_name" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter product name">
+                            placeholder="Enter first name">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <input type="text" name="category" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" name="last_name" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter category">
+                            placeholder="Enter last name">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Unit Price (€)</label>
-                        <input type="number" name="unit_price" step="0.01" min="0" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <input type="text" name="address"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00">
+                            placeholder="Enter address">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
-                        <input type="number" name="stock_quantity" min="0" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                        <input type="text" name="city"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0">
+                            placeholder="Enter city">
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
@@ -201,48 +180,48 @@
                     </button>
                     <button type="submit"
                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        <i class="fa-solid fa-plus mr-1"></i> Create Product
+                        <i class="fa-solid fa-plus mr-1"></i> Create Client
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Edit Product Modal -->
+    <!-- Edit Client Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
             <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Edit Product</h2>
+                <h2 class="text-lg font-semibold">Edit Client</h2>
                 <button onclick="closeModal('editModal')" class="text-white hover:text-gray-200">
                     <i class="fa-solid fa-times text-xl"></i>
                 </button>
             </div>
-            <form action="index.php?controller=Product&action=update" method="POST" class="p-6">
-                <input type="hidden" name="product_id" id="edit_product_id">
+            <form action="index.php?controller=Client&action=update" method="POST" class="p-6">
+                <input type="hidden" name="client_id" id="edit_client_id">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                        <input type="text" name="name" id="edit_name" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" name="first_name" id="edit_first_name" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter product name">
+                            placeholder="Enter first name">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <input type="text" name="category" id="edit_category" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" name="last_name" id="edit_last_name" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter category">
+                            placeholder="Enter last name">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Unit Price (€)</label>
-                        <input type="number" name="unit_price" id="edit_unit_price" step="0.01" min="0" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <input type="text" name="address" id="edit_address"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00">
+                            placeholder="Enter address">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
-                        <input type="number" name="stock_quantity" id="edit_stock_quantity" min="0" required
+                        <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                        <input type="text" name="city" id="edit_city"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0">
+                            placeholder="Enter city">
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
@@ -252,18 +231,18 @@
                     </button>
                     <button type="submit"
                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        <i class="fa-solid fa-save mr-1"></i> Update Product
+                        <i class="fa-solid fa-save mr-1"></i> Update Client
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Product Modal -->
+    <!-- Delete Client Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
             <div class="bg-red-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Delete Product</h2>
+                <h2 class="text-lg font-semibold">Delete Client</h2>
                 <button onclick="closeModal('deleteModal')" class="text-white hover:text-gray-200">
                     <i class="fa-solid fa-times text-xl"></i>
                 </button>
@@ -276,13 +255,13 @@
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h3>
                         <p class="text-sm text-gray-600">
-                            You are about to delete "<span id="delete_product_name" class="font-semibold"></span>". 
+                            You are about to delete "<span id="delete_client_name" class="font-semibold"></span>". 
                             This action cannot be undone.
                         </p>
                     </div>
                 </div>
-                <form action="index.php?controller=Product&action=delete" method="POST">
-                    <input type="hidden" name="product_id" id="delete_product_id">
+                <form action="index.php?controller=Client&action=delete" method="POST">
+                    <input type="hidden" name="client_id" id="delete_client_id">
                     <div class="flex justify-end gap-3">
                         <button type="button" onclick="closeModal('deleteModal')"
                             class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
@@ -290,7 +269,7 @@
                         </button>
                         <button type="submit"
                             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
-                            <i class="fa-solid fa-trash mr-1"></i> Delete Product
+                            <i class="fa-solid fa-trash mr-1"></i> Delete Client
                         </button>
                     </div>
                 </form>
@@ -299,41 +278,35 @@
     </div>
 
     <script>
-        // Open Create Modal
         function openCreateModal() {
             document.getElementById('createModal').classList.add('show');
         }
 
-        // Open Edit Modal with pre-filled data
-        function openEditModal(product) {
-            document.getElementById('edit_product_id').value = product.product_id;
-            document.getElementById('edit_name').value = product.name;
-            document.getElementById('edit_category').value = product.category;
-            document.getElementById('edit_unit_price').value = product.unit_price;
-            document.getElementById('edit_stock_quantity').value = product.stock_quantity;
+        function openEditModal(client) {
+            document.getElementById('edit_client_id').value = client.client_id;
+            document.getElementById('edit_first_name').value = client.first_name;
+            document.getElementById('edit_last_name').value = client.last_name;
+            document.getElementById('edit_address').value = client.address || '';
+            document.getElementById('edit_city').value = client.city || '';
             document.getElementById('editModal').classList.add('show');
         }
 
-        // Open Delete Modal
-        function openDeleteModal(productId, productName) {
-            document.getElementById('delete_product_id').value = productId;
-            document.getElementById('delete_product_name').textContent = productName;
+        function openDeleteModal(clientId, clientName) {
+            document.getElementById('delete_client_id').value = clientId;
+            document.getElementById('delete_client_name').textContent = clientName;
             document.getElementById('deleteModal').classList.add('show');
         }
 
-        // Close Modal
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('show');
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('show');
             }
         }
 
-        // Close modal with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 document.querySelectorAll('.modal').forEach(modal => {

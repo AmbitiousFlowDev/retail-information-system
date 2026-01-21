@@ -4,12 +4,119 @@ class AuditObserver implements Observer
 {
     public function update(string $event, $data = null): void
     {
+        $description = $this->generateDescription($event, $data);
+        $user = $_SESSION['user'] ?? null;
+
+        if (!$user) {
+            return;
+        }
+
         $audit = new Audit();
         $audit->create([
-            'action_type' => $event,
+            'action_type' => strtoupper($event),
             'action_date' => date('Y-m-d H:i:s'),
-            'description' => json_encode($data),
-            'user_id' => $_SESSION['user']['user_id'] ?? null
+            'description' => $description,
+            'user_id' => $user['user_id'] ?? null
         ]);
+    }
+
+    private function generateDescription(string $event, $data): string
+    {
+        $username = $_SESSION['user']['username'] ?? 'Unknown User';
+
+        switch ($event) {
+            // User Authentication Events
+            case 'user.login':
+                return "User '{$username}' logged into the system";
+
+            case 'user.logout':
+                return "User '{$username}' logged out of the system";
+
+            // Product CRUD Events
+            case 'product.created':
+                $name = $data['name'] ?? 'Unknown Product';
+                $category = $data['category'] ?? 'N/A';
+                $price = $data['unit_price'] ?? 0;
+                $stock = $data['stock_quantity'] ?? 0;
+                return "Product '{$name}' created in category '{$category}' with price €{$price} and stock quantity {$stock}";
+
+            case 'product.updated':
+                $id = $data['product_id'] ?? 'N/A';
+                $name = $data['name'] ?? 'Unknown Product';
+                $category = $data['category'] ?? 'N/A';
+                $price = $data['unit_price'] ?? 0;
+                $stock = $data['stock_quantity'] ?? 0;
+                return "Product ID {$id} '{$name}' updated - Category: '{$category}', Price: €{$price}, Stock: {$stock}";
+
+            case 'product.deleted':
+                $id = $data['product_id'] ?? 'N/A';
+                return "Product ID {$id} was deleted (soft delete)";
+
+            case 'product.price_updated':
+                $id = $data['product_id'] ?? 'N/A';
+                $price = $data['price'] ?? 0;
+                return "Product ID {$id} price updated to €{$price}";
+
+            // Order Events
+            case 'order.created':
+                $orderId = $data['order_id'] ?? 'N/A';
+                $clientId = $data['client_id'] ?? 'N/A';
+                return "Order ID {$orderId} created for Client ID {$clientId}";
+
+            case 'order.updated':
+                $orderId = $data['order_id'] ?? 'N/A';
+                return "Order ID {$orderId} was updated";
+
+            case 'order.deleted':
+                $orderId = $data['order_id'] ?? 'N/A';
+                return "Order ID {$orderId} was deleted";
+
+            // Client Events
+            case 'client.created':
+                $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
+                $city = $data['city'] ?? 'N/A';
+                return "Client '{$name}' from {$city} was created";
+
+            case 'client.updated':
+                $id = $data['client_id'] ?? 'N/A';
+                $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
+                return "Client ID {$id} '{$name}' information was updated";
+
+            case 'client.deleted':
+                $id = $data['client_id'] ?? 'N/A';
+                return "Client ID {$id} was deleted";
+
+            // Employee Events
+            case 'employee.created':
+                $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
+                return "Employee '{$name}' was created";
+
+            case 'employee.updated':
+                $id = $data['employee_id'] ?? 'N/A';
+                $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
+                return "Employee ID {$id} '{$name}' information was updated";
+
+            case 'employee.deleted':
+                $id = $data['employee_id'] ?? 'N/A';
+                return "Employee ID {$id} was deleted";
+
+            // User Management Events
+            case 'user.created':
+                $username = $data['username'] ?? 'N/A';
+                return "New user account '{$username}' was created";
+
+            case 'user.updated':
+                $id = $data['user_id'] ?? 'N/A';
+                $username = $data['username'] ?? 'N/A';
+                return "User account '{$username}' (ID: {$id}) was updated";
+
+            case 'user.deleted':
+                $id = $data['user_id'] ?? 'N/A';
+                return "User account ID {$id} was deleted";
+
+            // Default fallback
+            default:
+                return "Event '{$event}' occurred - " . json_encode($data);
+        }
     }
 }

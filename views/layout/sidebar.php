@@ -15,32 +15,40 @@
                 <i class="fa-solid fa-box w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Products</span>
             </a>
-            <a href="../orders/index.php"
+            <a href="index.php?controller=Order&action=index"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-cart-shopping w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Orders</span>
             </a>
-            <a href="../clients/index.php"
+            <a href="index.php?controller=Client&action=index"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-users w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Clients</span>
             </a>
-            <a href="../employees/index.php"
+            <a href="index.php?controller=Employee&action=index"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-id-badge w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Employees</span>
             </a>
-            <a href="../users/index.php"
+            <a href="index.php?controller=User&action=index"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-shield-halved w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Users</span>
+            </a>
+            
+            <div class="border-t border-gray-100 my-2"></div>
+            
+            <a href="index.php?controller=Audit&action=index"
+                class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
+                <i class="fa-solid fa-clipboard-list w-5 opacity-75"></i>
+                <span class="font-medium text-sm ml-2">Audit Logs</span>
             </a>
         </nav>
     </div>
 
     <!-- Bottom Actions -->
     <div class="p-4 border-t border-gray-100">
-        <a href="../auth/logout.php"
+        <a href="index.php?controller=Auth&action=logout"
             class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors">
             <i class="fa-solid fa-arrow-right-from-bracket w-5"></i>
             <span class="font-medium text-sm ml-2">Logout</span>
