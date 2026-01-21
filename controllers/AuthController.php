@@ -7,7 +7,6 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        // Attach AuditObserver to track authentication events
         $this->attach(new AuditObserver());
     }
 
@@ -15,7 +14,6 @@ class AuthController extends Controller
     {
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
-
         if ($this->authenticate($username, $password)) {
             $this->notify('user.login', $this->currentUser());
             $this->redirect('controller=Dashboard&action=index');
@@ -38,10 +36,8 @@ class AuthController extends Controller
     {
         $user = $this->currentUser();
         
-        // Notify before logout to ensure user data is still in session
         $this->notify('user.logout', $user);
-        
-        // Now perform the actual logout
+    
         unset($_SESSION['user']);
         session_destroy();
         
