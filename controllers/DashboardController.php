@@ -12,14 +12,31 @@ final class DashboardController extends Controller
             'products_count' => $this->getProductsCount(),
             'clients_count' => $this->getClientsCount(),
         ];
+        $userFullName = $this->getLoggedInUserFullName($_SESSION['user']['user_id']);
         $recentOrders = $this->getRecentOrders();
         $auditLogs = $this->getAuditLogs();
         $this->render('dashboard/index', compact(
             'metrics',
             'recentOrders',
-            'auditLogs'
+            'auditLogs',
+            'userFullName'
         ));
     }
+    private function getLoggedInUserFullName(int $userId): string
+    {
+        $db = Connection::getInstance();
+
+        $stmt = $db->prepare("
+        SELECT CONCAT(e.first_name, ' ', e.last_name) AS full_name
+        FROM User u
+        JOIN Employee e ON e.employee_id = u.employee_id
+        WHERE u.user_id = :userId AND u.deleted_at IS NULL AND e.deleted_at IS NULL
+    ");
+        $stmt->execute(['userId' => $userId]);
+
+        return $stmt->fetchColumn() ?: 'Admin';
+    }
+
     private function getTotalRevenue(): float
     {
         $db = Connection::getInstance();

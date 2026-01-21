@@ -1,5 +1,4 @@
 <?php
-require_once 'Model.php';
 
 final class Product extends Model
 {

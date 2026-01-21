@@ -6,14 +6,24 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - RIS</title>
+    <title>Dashboard - Retail System Information</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .table-row-hover:hover td {
+            background-color: #f9fafb;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 text-slate-800 font-sans antialiased">
@@ -22,17 +32,14 @@
 
         <?php include_once("views/layout/sidebar.php") ?>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100">
 
-            <!-- Top Header -->
-            <header class="h-16 bg-white border-b border-gray-200 flex justify-between items-center px-6 lg:px-8">
-                <h1 class="text-xl font-semibold text-slate-800">Overview</h1>
-
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-gray-200 flex justify-between items-center px-6 shadow-sm z-10">
+                <h1 class="text-xl font-semibold text-slate-800">Dashboard</h1>
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-slate-600">
-                        Welcome,
-                        <strong><?= htmlspecialchars($user->username ?? 'Admin') ?></strong>
+                        Welcome <strong><?= htmlspecialchars($userFullName ?? 'Admin') ?></strong>
                     </span>
                     <div class="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
                         <i class="fa-solid fa-user text-sm"></i>
@@ -40,12 +47,13 @@
                 </div>
             </header>
 
-            <!-- Scrollable Content -->
+            <!-- Main Content -->
             <div class="flex-1 overflow-auto p-6 lg:p-8">
 
-                <!-- Stats -->
+                <!-- Metrics Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
+                    <!-- Revenue -->
                     <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-500 uppercase">Total Revenue</p>
@@ -58,6 +66,7 @@
                         </div>
                     </div>
 
+                    <!-- Orders -->
                     <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-500 uppercase">Total Orders</p>
@@ -70,6 +79,7 @@
                         </div>
                     </div>
 
+                    <!-- Products -->
                     <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-500 uppercase">Products</p>
@@ -82,6 +92,7 @@
                         </div>
                     </div>
 
+                    <!-- Clients -->
                     <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-500 uppercase">Clients</p>
@@ -106,43 +117,36 @@
                             <a href="../orders/index.php" class="text-xs text-blue-600 hover:underline">View All</a>
                         </div>
 
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th class="py-2 pl-2 text-left">ID</th>
-                                    <th class="py-2 text-left">Status</th>
-                                    <th class="py-2 pr-2 text-right">Total</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600">ID</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600">Client</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600">Status</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600 text-right">Total</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y">
-
+                            <tbody class="divide-y divide-gray-100">
                                 <?php foreach ($recentOrders as $order): ?>
                                     <?php
-                                    $badgeClass = match ($order['status']) {
-                                        'Completed' => 'text-green-700 bg-green-50',
-                                        'Pending' => 'text-yellow-700 bg-yellow-50',
-                                        'Shipped' => 'text-blue-700 bg-blue-50',
-                                        default => 'text-gray-700 bg-gray-50'
+                                    $badgeClass = match ($order['status'] ?? 'Completed') {
+                                        'Completed' => 'bg-green-100 text-green-800',
+                                        'Pending' => 'bg-yellow-100 text-yellow-800',
+                                        'Shipped' => 'bg-blue-100 text-blue-800',
+                                        default => 'bg-gray-100 text-gray-800'
                                     };
                                     ?>
-                                    <tr>
-                                        <td class="py-3 pl-2">
-                                            <div class="font-medium">#ORD-<?= $order['id'] ?></div>
-                                            <div class="text-xs text-slate-400">
-                                                <?= htmlspecialchars($order['client']) ?>
-                                            </div>
-                                        </td>
-                                        <td class="py-3">
-                                            <span class="px-2 py-0.5 rounded text-xs font-medium <?= $badgeClass ?>">
-                                                <?= $order['status'] ?>
+                                    <tr class="table-row-hover transition-colors">
+                                        <td class="px-6 py-4 font-medium text-slate-900">#ORD-<?= $order['id'] ?></td>
+                                        <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($order['client']) ?></td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $badgeClass ?>">
+                                                <?= $order['status'] ?? 'Completed' ?>
                                             </span>
                                         </td>
-                                        <td class="py-3 pr-2 text-right font-medium">
-                                            $<?= number_format($order['total'], 2) ?>
-                                        </td>
+                                        <td class="px-6 py-4 text-right font-medium">$<?= number_format($order['total'], 2) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-
                             </tbody>
                         </table>
                     </div>
@@ -154,33 +158,24 @@
                             <span class="text-xs text-slate-400">Latest Activity</span>
                         </div>
 
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th class="py-2 pl-2 text-left">Action</th>
-                                    <th class="py-2 text-left">User</th>
-                                    <th class="py-2 pr-2 text-right">Time</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600">Action</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600">User</th>
+                                    <th class="px-6 py-3 font-semibold text-slate-600 text-right">Time</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y">
-
+                            <tbody class="divide-y divide-gray-100">
                                 <?php foreach ($auditLogs as $log): ?>
-                                    <tr>
-                                        <td class="py-3 pl-2">
-                                            <div class="font-medium"><?= $log['action'] ?></div>
-                                            <div class="text-xs text-slate-400"><?= $log['entity'] ?? '' ?></div>
+                                    <tr class="table-row-hover transition-colors">
+                                        <td class="px-6 py-4 font-medium text-slate-900"><?= $log['action'] ?></td>
+                                        <td class="px-6 py-4">
+                                            <span class="bg-slate-100 px-2 py-0.5 rounded text-xs"><?= $log['user'] ?></span>
                                         </td>
-                                        <td class="py-3">
-                                            <span class="bg-slate-100 px-2 py-0.5 rounded text-xs">
-                                                <?= $log['user'] ?>
-                                            </span>
-                                        </td>
-                                        <td class="py-3 pr-2 text-right text-xs text-slate-400">
-                                            <?= $log['created_at'] ?? '' ?>
-                                        </td>
+                                        <td class="px-6 py-4 text-right text-xs text-slate-400"><?= $log['created_at'] ?? '' ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-
                             </tbody>
                         </table>
                     </div>
@@ -188,9 +183,10 @@
                 </div>
 
             </div>
-        </main>
-    </div>
 
+        </main>
+
+    </div>
 </body>
 
 </html>

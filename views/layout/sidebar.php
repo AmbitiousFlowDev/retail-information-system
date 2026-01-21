@@ -2,34 +2,29 @@
     <div>
         <div class="h-16 flex items-center px-6 border-b border-gray-100">
             <i class="fa-solid fa-layer-group text-blue-600 text-xl mr-2"></i>
-            <span class="font-bold text-lg tracking-tight text-slate-900">RIS System</span>
+            <span class="font-bold text-sm tracking-tight text-slate-900">Retail Information System</span>
         </div>
         <nav class="p-4 space-y-1">
-            <a href="index.php" class="flex items-center px-4 py-2.5 bg-blue-50 text-blue-600 rounded-md">
+            <a href="index.php?controller=Dashboard&action=index" class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-gauge w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Dashboard</span>
             </a>
 
-            <a href="../products/index.php"
+            <a href="index.php?controller=Product&action=index"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-box w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Products</span>
             </a>
-
             <a href="../orders/index.php"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-cart-shopping w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Orders</span>
             </a>
-
-
-
             <a href="../clients/index.php"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-users w-5 opacity-75"></i>
                 <span class="font-medium text-sm ml-2">Clients</span>
             </a>
-
             <a href="../employees/index.php"
                 class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors">
                 <i class="fa-solid fa-id-badge w-5 opacity-75"></i>
