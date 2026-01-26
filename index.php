@@ -1,17 +1,8 @@
 <?php
-
 session_start();
-
 // PHP : IOC Container / Service Locator Pattern
-
 spl_autoload_register(function ($class) {
-    $directories = [
-        'controllers/',
-        'models/',
-        'utils/',
-        'traits/',
-        'interfaces/'
-    ];
+    $directories = ['controllers/','models/','utils/','traits/','interfaces/'];
     foreach ($directories as $directory) {
         $file = __DIR__ . '/' . $directory . $class . '.php';
         if (file_exists($file)) {
@@ -20,10 +11,8 @@ spl_autoload_register(function ($class) {
         }
     }
 });
-
 $controllerName = isset($_GET['controller']) ? ucfirst($_GET['controller']) . 'Controller' : 'AuthController';
 $actionName = $_GET['action'] ?? 'loginForm';
-
 if (class_exists($controllerName)) {
     $controller = new $controllerName();
     if (method_exists($controller, $actionName)) {
@@ -38,3 +27,4 @@ if (class_exists($controllerName)) {
 } else {
     echo "Error: The controller '$controllerName' was not found.";
 }
+?>
