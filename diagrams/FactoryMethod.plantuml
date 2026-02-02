@@ -1,0 +1,42 @@
+@startuml
+skinparam linetype ortho
+interface UserInterface {
+    +getRole(): string
+    +canAccessDashboard(): bool
+    +getUsername(): string
+    +getId(): int
+}
+
+abstract class UserProfile {
+    #data: array
+    +getUsername(): string
+    +getId(): int
+}
+
+class AdminUser {
+    +getRole(): string
+    +canAccessDashboard(): bool
+}
+
+class HRUser {
+    +getRole(): string
+    +canAccessDashboard(): bool
+}
+
+class CommercialUser {
+    +getRole(): string
+    +canAccessDashboard(): bool
+}
+
+class UserFactory {
+    {static} +create(userData: array): UserInterface
+}
+
+UserInterface <|.. UserProfile
+UserProfile <|-- AdminUser
+UserProfile <|-- HRUser
+UserProfile <|-- CommercialUser
+UserFactory ..> UserInterface : creates
+
+
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+skinparam linetype ortho
+class OrderController {
+    -orderBuilder: OrderBuilder
+    +create(data: array): void
+}
+class OrderBuilder {
+    -order_date: string
+    -client_id: int
+    -employee_id: int
+    +setOrderDate(date: string): self
+    +setClientId(id: int): self
+    +setEmployeeId(id: int): self
+    +build(): array
+}
+OrderController ..> OrderBuilder : uses
+OrderController ..> Order : "notifies/redirects"
+@enduml
