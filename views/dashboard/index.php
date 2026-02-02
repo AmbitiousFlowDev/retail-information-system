@@ -50,6 +50,13 @@
             <!-- Main Content -->
             <div class="flex-1 overflow-auto p-6 lg:p-8">
 
+                <?php if (isset($_GET['error']) && $_GET['error'] === 'forbidden'): ?>
+                <div class="mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-amber-600"></i>
+                    <span>You do not have permission to access that page.</span>
+                </div>
+                <?php endif; ?>
+
                 <!-- Metrics Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 

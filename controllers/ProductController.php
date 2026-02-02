@@ -2,6 +2,8 @@
 
 class ProductController extends Controller
 {
+    use AuthTrait;
+
     private Product $product;
 
     public function __construct()
@@ -12,6 +14,7 @@ class ProductController extends Controller
 
     public function index()
     {
+        $this->requireAccess('products');
         $products = $this->product->all();
         $user = Auth::user();
         $this->render('products/index', compact('products', 'user'));
@@ -19,6 +22,7 @@ class ProductController extends Controller
 
     public function create(array $data = [])
     {
+        $this->requireAccess('products');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productData = [
                 'name' => $data['name'] ?? '',
@@ -35,6 +39,7 @@ class ProductController extends Controller
 
     public function update(array $data = [])
     {
+        $this->requireAccess('products');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = (int)($data['product_id'] ?? 0);
             
@@ -53,6 +58,7 @@ class ProductController extends Controller
 
     public function updatePrice(int $id, float $price)
     {
+        $this->requireAccess('products');
         $this->product->updatePrice($id, $price);
         $this->notify('product.price_updated', [
             'product_id' => $id,
@@ -63,6 +69,7 @@ class ProductController extends Controller
 
     public function delete(array $data = [])
     {
+        $this->requireAccess('products');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = (int)($data['product_id'] ?? 0);
             $this->product->delete($productId);
@@ -73,49 +80,27 @@ class ProductController extends Controller
 
     public function exportPDF()
     {
+        $this->requireAccess('products');
         $products = $this->product->all();
-        
-        $pdf = new FPDF();
-        $pdf->AddPage();
-        
-        // Title
-        $pdf->SetFont('Arial', 'B', 16);
-        $pdf->Cell(0, 10, 'Products List', 0, 1, 'C');
-        $pdf->Ln(5);
-        
-        // Table Header
-        $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetFillColor(37, 99, 235); // Blue
-        $pdf->SetTextColor(255, 255, 255);
-        $pdf->Cell(15, 10, 'ID', 1, 0, 'C', true);
-        $pdf->Cell(60, 10, 'Name', 1, 0, 'C', true);
-        $pdf->Cell(50, 10, 'Category', 1, 0, 'C', true);
-        $pdf->Cell(30, 10, 'Price (EUR)', 1, 0, 'C', true);
-        $pdf->Cell(35, 10, 'Stock', 1, 1, 'C', true);
-        
-        // Table Data
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFillColor(240, 240, 240);
-        
-        $fill = false;
+
+        /** @var ReportInterface $report Adapter: FPDF wrapped by ReportInterface */
+        $report = new FPDFReportAdapter();
+        $report->addPage()
+            ->setTitle('Products List')
+            ->setTableHeaders(['ID', 'Name', 'Category', 'Price (EUR)', 'Stock']);
+
         foreach ($products as $product) {
-            $pdf->Cell(15, 8, $product['product_id'], 1, 0, 'C', $fill);
-            $pdf->Cell(60, 8, substr($product['name'], 0, 28), 1, 0, 'L', $fill);
-            $pdf->Cell(50, 8, substr($product['category'], 0, 20), 1, 0, 'L', $fill);
-            $pdf->Cell(30, 8, number_format($product['unit_price'], 2), 1, 0, 'R', $fill);
-            $pdf->Cell(35, 8, $product['stock_quantity'], 1, 1, 'C', $fill);
-            $fill = !$fill;
+            $report->addRow([
+                $product['product_id'],
+                $product['name'],
+                $product['category'],
+                number_format($product['unit_price'], 2),
+                $product['stock_quantity'],
+            ]);
         }
-        
-        // Footer
-        $pdf->Ln(10);
-        $pdf->SetFont('Arial', 'I', 8);
-        $pdf->Cell(0, 10, 'Generated on: ' . date('Y-m-d H:i:s'), 0, 0, 'C');
-        
+
+        $report->setFooter('Generated on: ' . date('Y-m-d H:i:s'));
         $this->notify('product.exported', ['count' => count($products), 'format' => 'PDF']);
-        
-        $pdf->Output('D', 'products_' . date('Y-m-d') . '.pdf');
-        exit;
+        $report->outputToBrowser('products_' . date('Y-m-d') . '.pdf');
     }
 }

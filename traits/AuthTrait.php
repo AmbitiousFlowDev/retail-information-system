@@ -9,13 +9,29 @@ trait AuthTrait
     public function requireAuth(): void
     {
         if (!$this->checkAuth()) {
-            header("Location: login.php");
+            header("Location: index.php?controller=Auth&action=loginForm");
             exit;
         }
     }
-    public function currentUser(): ?array
+
+    /**
+     * Require current user to have access to the given resource.
+     * Redirects to dashboard with error if not allowed.
+     * @param string $resource One of: dashboard, products, orders, clients, employees, users, audit
+     */
+    public function requireAccess(string $resource): void
     {
-        return $_SESSION['user'] ?? null;
+        $this->requireAuth();
+        $user = $this->currentUser();
+        if (!$user || !$user->canAccess($resource)) {
+            header('Location: index.php?controller=Dashboard&action=index&error=forbidden');
+            exit;
+        }
+    }
+    public function currentUser(): ?UserInterface
+    {
+        $user = $_SESSION['user'] ?? null;
+        return $user instanceof UserInterface ? $user : null;
     }
     public function authenticate(string $username, string $password): bool
     {

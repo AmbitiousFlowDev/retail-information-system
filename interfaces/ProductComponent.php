@@ -12,6 +12,6 @@ class ProductComponent implements Priceable {
     }
 
     public function getDescription(): string {
-        return $this->data['product_name'] ?? 'Product';
+        return $this->data['name'] ?? $this->data['product_name'] ?? 'Product';
     }
 }

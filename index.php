@@ -1,7 +1,7 @@
 <?php
 
 spl_autoload_register(function ($class) {
-    $directories = ['controllers/', 'models/', 'utils/', 'traits/', 'interfaces/'];
+    $directories = ['controllers/', 'models/', 'utils/', 'traits/', 'interfaces/', 'strategies/', 'adapters/'];
     foreach ($directories as $directory) {
         $file = __DIR__ . '/' . $directory . $class . '.php';
         if (file_exists($file)) {
@@ -10,6 +10,10 @@ spl_autoload_register(function ($class) {
         }
     }
 });
+
+require_once __DIR__ . '/interfaces/UserInterface.php';
+require_once __DIR__ . '/interfaces/UserProfile.php';
+require_once __DIR__ . '/interfaces/UserFactory.php';
 
 session_start();
 

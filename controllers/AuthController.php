@@ -8,6 +8,7 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->attach(new AuditObserver());
+        $this->attach(new SyncLogObserver());
     }
 
     public function login(array $data)

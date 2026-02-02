@@ -40,9 +40,21 @@ final class User extends Model
         return $this->db->prepare($sql)->execute($data);
     }
 
-    public function findByCredentials(string $username, string $password): ? UserInterface
+    /**
+     * Find user by credentials and return UserInterface (Factory creates concrete type).
+     * Joins Employee and Role so Factory can use role_code and user_category.
+     */
+    public function findByCredentials(string $username, string $password): ?UserInterface
     {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE username = ? AND password_hash = ? AND deleted_at IS NULL");
+        $sql = "
+            SELECT u.user_id, u.username, u.user_category, u.employee_id, r.role_code
+            FROM {$this->table} u
+            INNER JOIN Employee e ON e.employee_id = u.employee_id AND e.deleted_at IS NULL
+            INNER JOIN Role r ON r.role_id = e.role_id AND r.deleted_at IS NULL
+            WHERE u.username = ? AND u.password_hash = ? AND u.deleted_at IS NULL
+            LIMIT 1
+        ";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$username, md5($password)]);
         $data = $stmt->fetch();
 

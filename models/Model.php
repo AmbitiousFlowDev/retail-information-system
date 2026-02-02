@@ -49,7 +49,8 @@ abstract class Model
         );
 
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute($data);
+        $stmt->execute($data);
+        return $stmt->rowCount() ? (int) $this->db->lastInsertId() : false;
     }
     public function update(int $id, array $data)
     {

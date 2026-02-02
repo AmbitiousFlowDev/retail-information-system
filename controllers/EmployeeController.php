@@ -2,6 +2,8 @@
 
 class EmployeeController extends Controller
 {
+    use AuthTrait;
+
     private Employee $employee;
     private Role $role;
 
@@ -14,6 +16,7 @@ class EmployeeController extends Controller
 
     public function index()
     {
+        $this->requireAccess('employees');
         $employees = $this->employee->allWithRoles();
         $roles = $this->role->all();
         $user = Auth::user();
@@ -22,6 +25,7 @@ class EmployeeController extends Controller
 
     public function create(array $data = [])
     {
+        $this->requireAccess('employees');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $employeeData = [
                 'first_name' => $data['first_name'] ?? '',
@@ -37,6 +41,7 @@ class EmployeeController extends Controller
 
     public function update(array $data = [])
     {
+        $this->requireAccess('employees');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $employeeId = (int)($data['employee_id'] ?? 0);
             
@@ -54,6 +59,7 @@ class EmployeeController extends Controller
 
     public function delete(array $data = [])
     {
+        $this->requireAccess('employees');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $employeeId = (int)($data['employee_id'] ?? 0);
             $this->employee->delete($employeeId);
@@ -64,6 +70,7 @@ class EmployeeController extends Controller
 
     public function exportPDF()
     {
+        $this->requireAccess('employees');
         $employees = $this->employee->allWithRoles();
         
         $pdf = new FPDF();

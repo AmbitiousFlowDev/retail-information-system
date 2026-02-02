@@ -2,6 +2,8 @@
 
 class ClientController extends Controller
 {
+    use AuthTrait;
+
     private Client $client;
 
     public function __construct()
@@ -12,6 +14,7 @@ class ClientController extends Controller
 
     public function index()
     {
+        $this->requireAccess('clients');
         $clients = $this->client->all();
         $user = Auth::user();
         $this->render('clients/index', compact('clients', 'user'));
@@ -19,6 +22,7 @@ class ClientController extends Controller
 
     public function create(array $data = [])
     {
+        $this->requireAccess('clients');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $clientData = [
                 'first_name' => $data['first_name'] ?? '',
@@ -35,6 +39,7 @@ class ClientController extends Controller
 
     public function update(array $data = [])
     {
+        $this->requireAccess('clients');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $clientId = (int)($data['client_id'] ?? 0);
             
@@ -53,6 +58,7 @@ class ClientController extends Controller
 
     public function delete(array $data = [])
     {
+        $this->requireAccess('clients');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $clientId = (int)($data['client_id'] ?? 0);
             $this->client->delete($clientId);
@@ -63,6 +69,7 @@ class ClientController extends Controller
 
     public function exportPDF()
     {
+        $this->requireAccess('clients');
         $clients = $this->client->all();
         
         $pdf = new FPDF();

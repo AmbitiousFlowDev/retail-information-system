@@ -47,6 +47,10 @@ final class OrderBuilder implements OrderBuilderInterface
             }
         }
 
-        return $this->orderModel->create($this->data);
+        $id = $this->orderModel->create($this->data);
+        if ($id === false) {
+            throw new RuntimeException('Failed to create order');
+        }
+        return $id;
     }
 }

@@ -2,6 +2,8 @@
 
 class AuditController extends Controller
 {
+    use AuthTrait;
+
     private Audit $audit;
 
     public function __construct()
@@ -11,6 +13,7 @@ class AuditController extends Controller
 
     public function index()
     {
+        $this->requireAccess('audit');
         $audits = $this->audit->allWithUsers();
         $user = Auth::user();
         $this->render('audit/index', compact('audits', 'user'));
@@ -18,6 +21,7 @@ class AuditController extends Controller
 
     public function recent()
     {
+        $this->requireAccess('audit');
         $limit = $_GET['limit'] ?? 50;
         $audits = $this->audit->recent((int)$limit);
         $user = Auth::user();
@@ -26,6 +30,7 @@ class AuditController extends Controller
 
     public function byUser(int $userId)
     {
+        $this->requireAccess('audit');
         $audits = $this->audit->byUser($userId);
         $user = Auth::user();
         $this->render('audit/index', compact('audits', 'user'));

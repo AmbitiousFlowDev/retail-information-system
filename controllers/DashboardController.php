@@ -6,7 +6,7 @@ final class DashboardController extends Controller
 
     public function index()
     {
-        $this->requireAuth();
+        $this->requireAccess('dashboard');
 
         $userId = $this->getCurrentUserId();
 

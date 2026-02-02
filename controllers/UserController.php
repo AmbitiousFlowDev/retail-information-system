@@ -2,6 +2,8 @@
 
 class UserController extends Controller
 {
+    use AuthTrait;
+
     private User $userModel;
     private Employee $employee;
 
@@ -14,6 +16,7 @@ class UserController extends Controller
 
     public function index()
     {
+        $this->requireAccess('users');
         $users = $this->userModel->allWithEmployees();
         $employees = $this->employee->all();
         $currentUser = Auth::user();
@@ -22,6 +25,7 @@ class UserController extends Controller
 
     public function create(array $data = [])
     {
+        $this->requireAccess('users');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userData = [
                 'username' => $data['username'] ?? '',
@@ -38,6 +42,7 @@ class UserController extends Controller
 
     public function update(array $data = [])
     {
+        $this->requireAccess('users');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = (int)($data['user_id'] ?? 0);
             
@@ -60,6 +65,7 @@ class UserController extends Controller
 
     public function delete(array $data = [])
     {
+        $this->requireAccess('users');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = (int)($data['user_id'] ?? 0);
             $this->userModel->delete($userId);
@@ -70,6 +76,7 @@ class UserController extends Controller
 
     public function exportPDF()
     {
+        $this->requireAccess('users');
         $users = $this->userModel->allWithEmployees();
         
         $pdf = new FPDF();
