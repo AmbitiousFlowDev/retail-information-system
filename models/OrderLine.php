@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Model.php';
 
 final class OrderLine extends Model
@@ -15,6 +16,29 @@ final class OrderLine extends Model
         $stmt->execute([$orderId, $productId]);
         return $stmt->fetch();
     }
+
+    public function createWithPriceLogic(array $data)
+    {
+        $product = new ProductComponent($data);
+
+        if (($data['apply_discount'] ?? false)) {
+            $product = new DiscountDecorator($product);
+        }
+
+        $product = new TaxDecorator($product);
+
+        $data['unit_price'] = $product->getPrice();
+        $data['description'] = $product->getDescription();
+
+        unset($data['apply_discount']);
+
+        $columns = array_keys($data);
+        $placeholders = implode(", ", array_map(fn($col) => ":$col", $columns));
+        $sql = "INSERT INTO {$this->table} (" . implode(", ", $columns) . ") VALUES ($placeholders)";
+        
+        return $this->db->prepare($sql)->execute($data);
+    }
+
     public function deleteByOrderIdAndProductId(int $orderId, int $productId)
     {
         $stmt = $this->db->prepare("
@@ -24,6 +48,7 @@ final class OrderLine extends Model
         ");
         return $stmt->execute([$orderId, $productId]);
     }
+
     public function updateByOrderIdAndProductId(int $orderId, int $productId, array $data)
     {
         $columns = array_keys($data);

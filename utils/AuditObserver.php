@@ -4,35 +4,35 @@ class AuditObserver implements Observer
 {
     public function update(string $event, $data = null): void
     {
-        $description = $this->generateDescription($event, $data);
         $user = $_SESSION['user'] ?? null;
 
         if (!$user) {
             return;
         }
 
+        $description = $this->generateDescription($event, $data);
+
         $audit = new Audit();
         $audit->create([
             'action_type' => strtoupper($event),
             'action_date' => date('Y-m-d H:i:s'),
             'description' => $description,
-            'user_id' => $user['user_id'] ?? null
+            'user_id' => $user instanceof UserInterface ? $user->getId() : null
         ]);
     }
 
     private function generateDescription(string $event, $data): string
     {
-        $username = $_SESSION['user']['username'] ?? 'Unknown User';
+        $user = $_SESSION['user'] ?? null;
+        $username = ($user instanceof UserInterface) ? $user->getUsername() : 'Unknown User';
 
         switch ($event) {
-            // User Authentication Events
             case 'user.login':
                 return "User '{$username}' logged into the system";
 
             case 'user.logout':
                 return "User '{$username}' logged out of the system";
 
-            // Product CRUD Events
             case 'product.created':
                 $name = $data['name'] ?? 'Unknown Product';
                 $category = $data['category'] ?? 'N/A';
@@ -57,7 +57,6 @@ class AuditObserver implements Observer
                 $price = $data['price'] ?? 0;
                 return "Product ID {$id} price updated to €{$price}";
 
-            // Order Events
             case 'order.created':
                 $orderId = $data['order_id'] ?? 'N/A';
                 $clientId = $data['client_id'] ?? 'N/A';
@@ -71,7 +70,6 @@ class AuditObserver implements Observer
                 $orderId = $data['order_id'] ?? 'N/A';
                 return "Order ID {$orderId} was deleted";
 
-            // Client Events
             case 'client.created':
                 $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
                 $city = $data['city'] ?? 'N/A';
@@ -86,7 +84,6 @@ class AuditObserver implements Observer
                 $id = $data['client_id'] ?? 'N/A';
                 return "Client ID {$id} was deleted";
 
-            // Employee Events
             case 'employee.created':
                 $name = ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '');
                 return "Employee '{$name}' was created";
@@ -100,21 +97,19 @@ class AuditObserver implements Observer
                 $id = $data['employee_id'] ?? 'N/A';
                 return "Employee ID {$id} was deleted";
 
-            // User Management Events
             case 'user.created':
-                $username = $data['username'] ?? 'N/A';
-                return "New user account '{$username}' was created";
+                $usernameData = $data['username'] ?? 'N/A';
+                return "New user account '{$usernameData}' was created";
 
             case 'user.updated':
                 $id = $data['user_id'] ?? 'N/A';
-                $username = $data['username'] ?? 'N/A';
-                return "User account '{$username}' (ID: {$id}) was updated";
+                $usernameData = $data['username'] ?? 'N/A';
+                return "User account '{$usernameData}' (ID: {$id}) was updated";
 
             case 'user.deleted':
                 $id = $data['user_id'] ?? 'N/A';
                 return "User account ID {$id} was deleted";
 
-            // Default fallback
             default:
                 return "Event '{$event}' occurred - " . json_encode($data);
         }

@@ -40,10 +40,12 @@ final class User extends Model
         return $this->db->prepare($sql)->execute($data);
     }
 
-    public function findByCredentials(string $username, string $password)
+    public function findByCredentials(string $username, string $password): ? UserInterface
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE username = ? AND password_hash = ? AND deleted_at IS NULL");
         $stmt->execute([$username, md5($password)]);
-        return $stmt->fetch();
+        $data = $stmt->fetch();
+
+        return $data ? UserFactory::create($data) : null;
     }
 }

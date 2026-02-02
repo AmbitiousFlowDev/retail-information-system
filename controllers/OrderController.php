@@ -26,14 +26,15 @@ class OrderController extends Controller
     public function create(array $data = [])
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $orderData = [
-                'order_date' => $data['order_date'] ?? date('Y-m-d'),
-                'client_id' => (int)($data['client_id'] ?? 0),
-                'employee_id' => (int)($data['employee_id'] ?? 0)
-            ];
+            $builder = new OrderBuilder();
 
-            $this->order->create($orderData);
-            $this->notify('order.created', $orderData);
+            $order = $builder
+                ->setOrderDate($data['order_date'] ?? date('Y-m-d'))
+                ->setClientId((int) ($data['client_id'] ?? 0))
+                ->setEmployeeId((int) ($data['employee_id'] ?? 0))
+                ->build();
+
+            $this->notify('order.created', $order);
             $this->redirect('controller=Order&action=index');
         }
     }
@@ -41,12 +42,12 @@ class OrderController extends Controller
     public function update(array $data = [])
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $orderId = (int)($data['order_id'] ?? 0);
-            
+            $orderId = (int) ($data['order_id'] ?? 0);
+
             $orderData = [
                 'order_date' => $data['order_date'] ?? date('Y-m-d'),
-                'client_id' => (int)($data['client_id'] ?? 0),
-                'employee_id' => (int)($data['employee_id'] ?? 0)
+                'client_id' => (int) ($data['client_id'] ?? 0),
+                'employee_id' => (int) ($data['employee_id'] ?? 0)
             ];
 
             $this->order->update($orderId, $orderData);
@@ -58,7 +59,7 @@ class OrderController extends Controller
     public function delete(array $data = [])
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $orderId = (int)($data['order_id'] ?? 0);
+            $orderId = (int) ($data['order_id'] ?? 0);
             $this->order->delete($orderId);
             $this->notify('order.deleted', ['order_id' => $orderId]);
             $this->redirect('controller=Order&action=index');
@@ -68,29 +69,26 @@ class OrderController extends Controller
     public function exportPDF()
     {
         $orders = $this->order->allWithDetails();
-        
+
         $pdf = new FPDF();
         $pdf->AddPage();
-        
-        // Title
+
         $pdf->SetFont('Arial', 'B', 16);
         $pdf->Cell(0, 10, 'Orders List', 0, 1, 'C');
         $pdf->Ln(5);
-        
-        // Table Header
+
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetFillColor(249, 115, 22); // Orange
+        $pdf->SetFillColor(249, 115, 22);
         $pdf->SetTextColor(255, 255, 255);
         $pdf->Cell(20, 10, 'ID', 1, 0, 'C', true);
         $pdf->Cell(35, 10, 'Date', 1, 0, 'C', true);
         $pdf->Cell(65, 10, 'Client', 1, 0, 'C', true);
         $pdf->Cell(70, 10, 'Employee', 1, 1, 'C', true);
-        
-        // Table Data
+
         $pdf->SetFont('Arial', '', 10);
         $pdf->SetTextColor(0, 0, 0);
         $pdf->SetFillColor(240, 240, 240);
-        
+
         $fill = false;
         foreach ($orders as $order) {
             $pdf->Cell(20, 8, $order['order_id'], 1, 0, 'C', $fill);
@@ -99,14 +97,13 @@ class OrderController extends Controller
             $pdf->Cell(70, 8, substr($order['employee_name'] ?? 'N/A', 0, 30), 1, 1, 'L', $fill);
             $fill = !$fill;
         }
-        
-        // Footer
+
         $pdf->Ln(10);
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->Cell(0, 10, 'Generated on: ' . date('Y-m-d H:i:s'), 0, 0, 'C');
-        
+
         $this->notify('order.exported', ['count' => count($orders), 'format' => 'PDF']);
-        
+
         $pdf->Output('D', 'orders_' . date('Y-m-d') . '.pdf');
         exit;
     }
